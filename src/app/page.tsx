@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useBookmarks, ImageData } from "@/components/BookmarkContext";
+import { useBookmarks, ImageData } from "@/components/BookmarkContext"; // pakai ini saja
 import ImageModal from "@/components/ImageModal";
 
 export default function Home() {
@@ -45,7 +45,6 @@ export default function Home() {
         {images.map((img) => (
           <div key={img.id} className="relative mb-4 break-inside-avoid">
             <ImageModal img={img} />
-
             <button
               onClick={() => toggleBookmark(img)}
               className="absolute px-2 py-1 text-white rounded top-2 right-2 bg-black/60"
