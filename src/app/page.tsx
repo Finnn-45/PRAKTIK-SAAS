@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useBookmarks, ImageData } from "@/components/BookmarkContext"; // pakai ini saja
+import { useBookmarks, ImageData } from "@/components/BookmarkContext";
 import ImageModal from "@/components/ImageModal";
 
 export default function Home() {
@@ -20,8 +20,11 @@ export default function Home() {
 
       const data = await res.json();
 
+      // Prevent crash if fetch fails
+      const results: ImageData[] = data?.results || [];
+
       setImages((prev) => {
-        const filtered = data.results.filter(
+        const filtered = results.filter(
           (img: ImageData) => !prev.some((p) => p.id === img.id)
         );
         return [...prev, ...filtered];
