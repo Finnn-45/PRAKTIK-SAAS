@@ -1,11 +1,13 @@
-"use client";
+"use client"; // <- WAJIB
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, ReactNode } from "react";
 
-type ImageData = { 
-  id: string; 
-  urls: { small: string; regular: string }; 
-  alt_description?: string;
+export type ImageData = {
+  id: string;
+  urls: { small: string; regular: string };
+  alt_description: string | null;
+  user: { name: string; links: { html: string } };
+  links: { html: string };
 };
 
 type BookmarkContextType = {
@@ -13,18 +15,17 @@ type BookmarkContextType = {
   toggleBookmark: (img: ImageData) => void;
 };
 
-const BookmarkContext = createContext<BookmarkContextType | null>(null);
+const BookmarkContext = createContext<BookmarkContextType | undefined>(undefined);
 
-export function BookmarkProvider({ children }: { children: React.ReactNode }) {
+export const BookmarkProvider = ({ children }: { children: ReactNode }) => {
   const [bookmarks, setBookmarks] = useState<ImageData[]>([]);
 
-  const toggleBookmark = (item: ImageData) => {
-    setBookmarks((prev) => {
-      const exists = prev.some((b) => b.id === item.id);
-      return exists
-        ? prev.filter((b) => b.id !== item.id)
-        : [...prev, item];
-    });
+  const toggleBookmark = (img: ImageData) => {
+    setBookmarks((prev) =>
+      prev.some((b) => b.id === img.id)
+        ? prev.filter((b) => b.id !== img.id)
+        : [...prev, img]
+    );
   };
 
   return (
@@ -32,10 +33,10 @@ export function BookmarkProvider({ children }: { children: React.ReactNode }) {
       {children}
     </BookmarkContext.Provider>
   );
-}
+};
 
 export const useBookmarks = () => {
-  const ctx = useContext(BookmarkContext);
-  if (!ctx) throw new Error("useBookmarks must be used within BookmarkProvider");
-  return ctx;
+  const context = useContext(BookmarkContext);
+  if (!context) throw new Error("useBookmarks must be used within BookmarkProvider");
+  return context;
 };

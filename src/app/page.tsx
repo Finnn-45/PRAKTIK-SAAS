@@ -1,16 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useBookmarks } from "@/components/BookmarkContext";
+import { useBookmarks, ImageData } from "@/components/BookmarkContext";
 import ImageModal from "@/components/ImageModal";
-
-type ImageData = {
-  id: string;
-  urls: { small: string; regular: string };
-  alt_description: string | null; // FIX: Unsplash bisa null
-  user: { name: string; links: { html: string } };
-  links: { html: string };
-};
 
 export default function Home() {
   const [images, setImages] = useState<ImageData[]>([]);
@@ -19,7 +11,6 @@ export default function Home() {
 
   const { bookmarks, toggleBookmark } = useBookmarks();
 
-  // 🔥 FIX DUPLIKAT KEY
   const fetchImages = async (pageNumber: number) => {
     setLoading(true);
     try {
@@ -50,28 +41,21 @@ export default function Home() {
 
   return (
     <main className="px-6 py-8">
+      <div className="gap-4 columns-2 sm:columns-3 md:columns-4">
+        {images.map((img) => (
+          <div key={img.id} className="relative mb-4 break-inside-avoid">
+            <ImageModal img={img} />
 
-<div className="gap-4 columns-2 sm:columns-3 md:columns-4">
-  {images.map((img) => (
-    <div key={img.id} className="relative mb-4 break-inside-avoid">
-      
-      {/* modal */}
-      <ImageModal img={img} />
+            <button
+              onClick={() => toggleBookmark(img)}
+              className="absolute px-2 py-1 text-white rounded top-2 right-2 bg-black/60"
+            >
+              {bookmarks.some((b) => b.id === img.id) ? "★" : "☆"}
+            </button>
+          </div>
+        ))}
+      </div>
 
-      {/* bookmark button */}
-      <button
-        onClick={() => toggleBookmark(img)}
-        className="absolute px-2 py-1 text-white rounded top-2 right-2 bg-black/60"
-      >
-        {bookmarks.some((b) => b.id === img.id) ? "★" : "☆"}
-      </button>
-    </div>
-  ))}
-</div>
-
-
-
-      {/* LOAD MORE */}
       <div className="flex justify-center mt-6">
         <button
           onClick={loadMore}
